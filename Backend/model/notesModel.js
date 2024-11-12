@@ -8,11 +8,25 @@ const getNotesTable = async () => {
         }
         return result
     } catch (err) {
-        console.log('Database error in getNotesTable: ', err)
+        console.log('Error catched in getNotesTable under notesModel', err)
+        throw err
+    }
+}
+
+const getNotesById = async (id) => {
+    try {
+        const result = await db.one('SELECT * FROM notes WHERE id = $1', [id])
+        if (result.length === 0){
+            throw new Error('id not found')
+        }
+        return result
+    } catch (err) {
+        console.log('Error catched in getNotesById under notesModel ', err)
         throw err
     }
 }
 
 module.exports = {
-    getNotesTable
+    getNotesTable,
+    getNotesById
 }
