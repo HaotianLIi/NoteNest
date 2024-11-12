@@ -1,6 +1,6 @@
 const db = require('../db')
 
-const getStatus = async() => {
+const getStatusTable = async() => {
     try {
         const result = await db.any('SELECT * FROM status')
         
@@ -9,11 +9,11 @@ const getStatus = async() => {
         }
         return result
     } catch (err) {
-        console.error('Database error in getStatus: ', err)
-        throw new Error('Database error')
+        console.error('Database error in getStatusTable: ', err)
+        throw err
     }
 }
 
 module.exports = {
-    getStatus
+    getStatusTable
 }
