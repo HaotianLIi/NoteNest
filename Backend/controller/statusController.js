@@ -1,4 +1,4 @@
-const { getStatusTable, getStatusById } = require('../model/statusModel')
+const { getStatusTable, getStatusById, createStatus,deleteStatus, updateStatus } = require('../model/statusModel')
 
 
 const getAllStatusController = async (req, res) => {
@@ -28,9 +28,57 @@ const getStatusByIdController = async (req, res) => {
     }
 }
 
+const createStatusController = async (req, res) => {
+    const status = req.body.status
+    try {
+        const result = await createStatus(status)
+        console.log('Create successfully: ', result)
+        res.json(result)
+    } catch (err) {
+        if (err.message === 'add new status failed'){
+            res.status(404).send({message: 'no new status found'})
+        } else {
+            console.log(req.body)
+            res.status(500).send({message: `${err.message}`})
+        }
+    }
+}
+
+const deleteStatusController = async (req, res) => {
+    const id = req.params.id
+    try {
+        const result = await deleteStatus(id)
+        console.log(`Status Deleted, ID: ${result.rows[0].id}, Status: ${result.rows[0].status}`)
+        res.json(`Status Deleted ${result}`)
+    } catch (err) {
+        if (err.message === 'status none exist'){
+            res.status(404).send({message: 'selected status none exist'})
+        } else {
+            res.status(500).send({message: `${err.message}`})
+        }
+    }
+}
+
+const updateStatusController = async (req, res) => {
+    const{status, id} = req.body
+    try {
+        const result = await updateStatus(status,id)
+        res.json(result)
+    } catch (err) {
+        if (err.message === 'Update id not found'){
+            res.status(404).send({message: 'target id not found in database'})
+        } else {
+            res.status(505).send({message: `${err.message}`})
+        }
+    }
+}
+
 module.exports = {
     getAllStatusController,
-    getStatusByIdController
+    getStatusByIdController,
+    createStatusController,
+    deleteStatusController,
+    updateStatusController
 }
 
 
