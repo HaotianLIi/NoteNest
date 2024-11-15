@@ -54,7 +54,7 @@ const updateNotesController = async (req, res) => {
         if (err.message === 'Data not found'){
             res.status(404).send({message: 'notes not found in updateNotes'})
         } else {
-            res.status(500).send({message: `Error message: ${err.message}`})
+            res.status(500).send({message: `${err.message}`})
         }
         
     }
@@ -67,10 +67,10 @@ const deleteNotesController = async (req,res) => {
          console.log(`Note Deleted: ID ${result.rows[0].id}, Title: ${result.rows[0].title}`);
          res.json(result.rows)
     } catch (err){
-        if (err.message === 'Data not found'){
-            res.status(404).send({message: 'Data not found in deleteNotes'})
+        if (err.message === 'Notes none exist'){
+            res.status(404).send({message: 'Delete failed, notes not found'})
         } else {
-            res.status(500).send({message: `Error message: ${err.message}`})
+            res.status(500).send({message: `${err.message}`})
         }
     }
 }

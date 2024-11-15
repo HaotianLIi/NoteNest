@@ -61,12 +61,12 @@ const updateNotes = async (title,body,status_id,id) => {
 const deleteNotes = async (id) => {
     try {
         const result = await db.result('DELETE FROM notes WHERE id = $1 RETURNING *',[id])
-        console.log(`Rows deleted: ${result.rowCount}`);
+        if (!result) {
+            throw new Error('Notes none exist')
+        }
         return result
     } catch (err) {
-        if(err.received === 0){
-            throw new Error('Data not found')
-        }
+        console.log('Error Message: ', err)
         throw err
     }
 } 
