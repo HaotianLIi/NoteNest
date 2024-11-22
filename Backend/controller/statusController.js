@@ -3,76 +3,80 @@ const { getStatusTable, getStatusById, createStatus,deleteStatus, updateStatus }
 const getAllStatusController = async (req, res) => {
     try {
         const result = await getStatusTable()
-        res.status(201).json({message: 'Displayed row', data: result})
-    } catch (err){
-        if(err.message === 'No data Found'){
+        if(!result) {
             return res.status(404).send('No status data found')
-        } 
+        }
+        res.status(200).json({message: 'Displayed row', data: result})
+    } catch (err){
         res.status(500).send({message: `Error Occured:  ${err.message}`})
     }
 }
 
 const getStatusByIdController = async (req, res) => {
-    const id = req.params.id
-
-    if (!id)  return res.status(400).send({message: 'Validation: Missing required field'})
-
+    const id = req.params.notes_id
+    if (!id) {
+        return res.status(400).send({message: 'Validation: Missing required field'})
+    }
+    // Only starting the interaction with the database after confirmed the use input is valid
     try {
         const result = await getStatusById(id)
-        res.status(201).json({message: 'Displayed row', data: result})
-    } catch (err) {
-        if (err.message === 'Status id not found'){
-            return res.status(404).send('Status id not found')
+        if(!result){
+            return res.status(404).sned({message: 'id not found'})
         }
+        res.status(200).json({message: 'Displayed row', data: result})
+    } catch (err) {
         res.status(500).send({message: `Error Occured:  ${err.message}`})
     }
 }
 
 const createStatusController = async (req, res) => {
     const status = req.body.status
-
-    if(!status) return res.status(400).send({message: 'Validation: Missing required field'})
+    if(!status) {
+        return res.status(400).send({message: 'Validation: Missing status required field'})
+    }
 
     try {
         const result = await createStatus(status)
-        res.status(201).json({message: 'Created row', data: result})
-    } catch (err) {
-        if (err.message === 'Add new status failed'){
+        if(!result){
             return res.status(404).send({message: 'no new status found'})
         }
+        res.status(201).json({message: 'Created row', data: result})
+    } catch (err) {
         res.status(500).send({message: `Error Occured: ${err.message}`})
     }
 }
 
 const deleteStatusController = async (req, res) => {
     const id = req.params.id
-
-    if(!id) return res.status(400).send({message: 'Validation: Missing reuqired field'})
+    if(!id) {
+        return res.status(400).send({message: 'Validation: Missing reuqired field'})
+    }
 
     try {
         const result = await deleteStatus(id)
-        res.status(201).json({message: 'Deleted row', data: result})
-    } catch (err) {
-        if (err.message === 'Delete status failed'){
-            return res.status(404).send({message: 'Database connection issue or status none exist'})
+        if(!result){
+            return res.status(404).send({message: 'delete content not found'})
         }
+        res.status(200).json({message: 'Deleted row', data: result})
+    } catch (err) {
         res.status(500).send({message: `Error Occured: ${err.message}`})
     }
 }
 
 const updateStatusController = async (req, res) => {
     const{status, id} = req.body
-
-    if(!status || !id) return res.status(400).send({message: 'Validation: Missing required field'})
+    if(!status || !id) {
+        return res.status(400).send({message: 'Validation: Missing required field'})
+    }
 
     try {
         const result = await updateStatus(status,id)
-        res.json({message: 'Updated row', data: result})
+        if(!result){
+            return res.status(404).send({message: 'Target id not found in database'})
+        }
+        res.status(200).json({message: 'Updated row', data: result})
     } catch (err) {
-        if (err.message === 'Update status failed'){
-            return res.status(404).send({message: 'target id not found in database'})
-        } 
-        res.status(505).send({message: `Error Occured: ${err.message}`})
+        res.status(500).send({message: `Error Occured: ${err.message}`})
     }
 }
 
